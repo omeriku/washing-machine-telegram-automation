@@ -107,3 +107,33 @@ action:
         - automation.please_go_to_the_washing_machine
         - automation.empty_washing_machine
 mode: single
+
+################################################################
+
+alias: Dryer Finnished
+description: ''
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.dryer_power
+    for: '0:02:00'
+    below: '20'
+condition:
+  - condition: and
+    conditions:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.dryer_power
+            state: '-1'
+      - condition: template
+        value_template: >-
+          {{ as_timestamp(now()) -
+          as_timestamp(states.automation.dryer_finnished.attributes.last_triggered)
+          > 900 }}
+action:
+  - service: notify.telegram_home_bot
+    data:
+      message: "{{ ( \"המייבש *סיים* לעבוד \U0001F455\", \" *תתכונן לקפל כביסה..* המייבש סיים \U0001F474\U0001F3FB\", \"שומעים חברס מישהו יכול *לפנות את המייבש כבר? \U0001F57A\U0001F3FB\", \"הלווו עצלנים! הגיע הזמן לפנות את המייבש ⏰\", \"יא אללה נראה לי שנעלמו לי התחתונים במייבש מישהו יכול לדאוג *לפנות אותו כבר ?* \U0001FA72\", \"ואי ואי ייבשתם אותי.. שמישהו יפנה את *הכביסה היבשה כבר* ☔\" ) | random }} "
+mode: single
+
+################################################################
