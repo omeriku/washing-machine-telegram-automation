@@ -1,0 +1,109 @@
+## automation.yaml ##
+
+alias: LG washing machine finnished
+description: ''
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.lg_washing_machine_power
+    below: '5'
+    for: '00:01:30'
+condition:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.lg_washing_machine_power
+        state: '-1'
+action:
+  - service: notify.telegram_home_bot
+    data:
+      message: מכונת הכביסה של *LG* סיימה לעבוד
+      data:
+        inline_keyboard:
+          - 'פיניתי כבר את המכונה:/done_wm'
+  - service: automation.turn_on
+    target:
+      entity_id:
+        - automation.please_go_to_the_washing_machine
+        - automation.empty_washing_machine
+mode: single
+
+################################################################
+
+alias: Elecrolux washing machine finnished
+description: ''
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.elecrtolux_washing_machine_power
+    below: '3'
+    for: '00:01:30'
+condition:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.elecrtolux_washing_machine_power
+        state: '-1'
+action:
+  - service: notify.telegram_home_bot
+    data:
+      message: מכונת הכביסה של *Electrolux* סיימה לעבוד
+      data:
+        inline_keyboard:
+          - 'פיניתי כבר את המכונה:/done_wm'
+  - service: automation.turn_on
+    target:
+      entity_id:
+        - automation.please_go_to_the_washing_machine
+        - automation.empty_washing_machine
+mode: single
+
+################################################################
+
+alias: Please Go to the Washing Machine
+description: 'no one pressed inline'
+trigger:
+- platform: time_pattern
+  minutes: /15
+condition:
+- condition: and
+  conditions:
+  - condition: template
+    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.lg_washing_machime_finnished.attributes.last_triggered)
+      > 600 }}'
+  - condition: template
+    value_template: '{{ as_timestamp(now()) - as_timestamp(states.automation.elecrolux_washing_machime_finnished.attributes.last_triggered)
+      > 600 }}'
+action:
+- service: notify.telegram_home_bot
+  data:
+    message: '{{ ( "יאללה גשו גשו לפנות את הכביסה ", "צדיק! יש לך 5 דקות לפנות מכונה
+      ?",  "בדד אלך, גם כביסה אין לי. בדד, בלי מרכך, בלי ספטיל בלי חלוווום ",  "עד
+      מתיייי תשאירו את הכביסה במכונה", "וואלק אמא, לא תפרגני לי באיזה פינוי כביסה
+      ?", "זוהי קריאה אחרונה לנוסעי כביסת 777 נא לפנות את המכונה ! בואוווווו", "יאללה
+      הרגתם אותי, שלחו איזה נציג שיפנה את הכביסה",  "ידעתי.. ידעתי שאתם רוצים להחליף
+      אותי! אחרת מזמן הייתם מפנים את הכביסה", "אם רק היה לי שקל על כל פעם שלא באו
+      לפנות את המכונה" ) | random }}'
+    data:
+      inline_keyboard:
+      - פיניתי כבר את המכונה:/done_wm
+mode: single
+
+################################################################
+
+alias: Empty Washing machine
+description: 'when someone press inline'
+trigger:
+  - platform: event
+    event_data:
+      command: /done_wm
+    event_type: telegram_callback
+condition: []
+action:
+  - service: notify.telegram_home_bot
+    data:
+      message: "{{trigger.event.data.from_first}} {{ ("hello", "this", "is", "random", "message", "use", "your", "own", "ideas") | random }}"
+  - service: automation.turn_off
+    target:
+      entity_id:
+        - automation.please_go_to_the_washing_machine
+        - automation.empty_washing_machine
+mode: single
