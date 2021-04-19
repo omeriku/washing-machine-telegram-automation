@@ -1,0 +1,64 @@
+## configuration.yaml ##
+
+sensors:
+  dryer_power:
+    friendly_name_template: >-
+      {% if states('sensor.shelly1pm_dryer_power')|float > 20 %}
+        Dryer is Working Now
+      {% else %}
+        Dryer is ready to use
+      {% endif %}
+    icon_template: >-
+      {% if states('sensor.shelly1pm_dryer_power')|float > 20 %}
+        mdi:tumble-dryer
+      {% else %}
+        mdi:tumble-dryer-off
+      {% endif %}
+    value_template: >-
+      {% if states('switch.shelly1pm_dryer')  != 'unavailable' %}
+        {{ states('sensor.shelly1pm_dryer_power') }}
+      {% else %}
+        {{ -1 }}
+      {% endif %}
+    unit_of_measurement: "W"
+  lg_washing_machine_power:
+    friendly_name_template: >-
+      {% if states('sensor.shelly1pm_lg_washing_machine_power')|float > 5 %}
+        LG is Working Now
+      {% else %}
+        LG is ready to use
+      {% endif %}
+    icon_template: >-
+      {% if states('sensor.shelly1pm_lg_washing_machine_power')|float > 5 %}
+        mdi:washing-machine
+      {% else %}
+        mdi:washing-machine-off
+      {% endif %}
+    value_template: >-
+      {% if states('switch.shelly1pm_lg_washing_machine')  != 'unavailable' %}
+        {{ states('sensor.shelly1pm_lg_washing_machine_power') }}
+      {% else %}
+        {{ -1 }}
+      {% endif %}
+    unit_of_measurement: "W"
+
+  elecrtolux_washing_machine_power:
+    friendly_name_template: >-
+      {% if states('sensor.shelly1pm_electrolux_washing_machine_power')|float > 3 %}
+        Electrolux is Working Now
+      {% else %}
+        Electrolux is ready to use
+      {% endif %}
+    icon_template: >-
+      {% if states('sensor.shelly1pm_electrolux_washing_machine_power')|float > 3 %}
+        mdi:washing-machine
+      {% else %}
+        mdi:washing-machine-off
+      {% endif %}
+    value_template: >-
+      {% if states('switch.shelly1pm_electrolux_washing_machine')  != 'unavailable' %}
+        {{ states('sensor.shelly1pm_electrolux_washing_machine_power') }}
+      {% else %}
+        {{ -1 }}
+      {% endif %}
+    unit_of_measurement: "W"
