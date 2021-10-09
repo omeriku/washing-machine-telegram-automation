@@ -7,27 +7,28 @@
 ## configuration.yaml ##
 
 sensor:
-  sensors:
-    dryer_power:
-      friendly_name_template: >-
-        {% if states('sensor.shelly1pm_dryer_power')|float > 20 %}
-          Dryer is Working Now
-        {% else %}
-          Dryer is ready to use
-        {% endif %}
-      icon_template: >-
-        {% if states('sensor.shelly1pm_dryer_power')|float > 20 %}
-          mdi:tumble-dryer
-        {% else %}
-          mdi:tumble-dryer-off
-        {% endif %}
-      value_template: >-
-        {% if states('switch.shelly1pm_dryer')  != 'unavailable' %}
-          {{ states('sensor.shelly1pm_dryer_power') }}
-        {% else %}
-          {{ -1 }}
-        {% endif %}
-      unit_of_measurement: "W"
+  - platform: template
+    sensors:
+      dryer_power:
+        friendly_name_template: >-
+          {% if states('sensor.shelly1pm_dryer_power')|float > 20 %}
+            Dryer is Working Now
+          {% else %}
+            Dryer is ready to use
+          {% endif %}
+        icon_template: >-
+          {% if states('sensor.shelly1pm_dryer_power')|float > 20 %}
+            mdi:tumble-dryer
+          {% else %}
+            mdi:tumble-dryer-off
+          {% endif %}
+        value_template: >-
+          {% if states('switch.shelly1pm_dryer')  != 'unavailable' %}
+            {{ states('sensor.shelly1pm_dryer_power') }}
+          {% else %}
+            {{ -1 }}
+          {% endif %}
+        unit_of_measurement: "W"
    ```
 
 <img src="https://user-images.githubusercontent.com/73793617/116567150-0a299400-a910-11eb-8b0a-f1d70392f338.jpg" width="50%">
